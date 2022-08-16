@@ -1,4 +1,4 @@
-FROM wordpress:php8.0-fpm
+FROM wordpress:php8.1-fpm
 
 MAINTAINER Scavin <scavin@appinn.com>
 
