@@ -13,6 +13,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag wp-php8-with-memcache:$(date +%s)
+    - 
+      name: Checkout
+      uses: actions/checkout@v3      
+    - 
+      name: Docker Login
+      uses: docker/login-action@v2.0.0
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+    -
+      name: Build and push
+      uses: docker/build-push-action@v2
+      with:
+        context: ./
+        file: ./Dockerfile
+        builder: ${{ steps.buildx.outputs.name }}
+        push: true
+        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/wp-php8-with-memcache:latest
+        cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/wp-php8-with-memcache:buildcache
+        cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/wp-php8-with-memcache:buildcache,mode=max
